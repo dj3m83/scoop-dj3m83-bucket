@@ -1,0 +1,65 @@
+name: Auto-update PDF-XChange Viewer
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # codziennie o 02:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y curl jq unzip
+
+      - name: Download latest installer
+        run: |
+          curl -L https://downloads.pdf-xchange.com/PDFXVwer.exe -o PDFXVwer.exe
+
+      - name: Extract version from EXE
+        id: version
+        run: |
+          # Wyciągamy numer wersji z właściwości EXE (Windows .NET/PE)
+          # Używamy 'exiftool' do odczytu ProductVersion
+          sudo apt-get install -y libimage-exiftool-perl
+          VER=$(exiftool -s -s -s -ProductVersion PDFXVwer.exe)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+          echo "version=$VER" >> $GITHUB_OUTPUT
+
+      - name: Compute SHA256 hash
+        id: hash
+        run: |
+          HASH=$(sha256sum PDFXVwer.exe | awk '{print $1}')
+          echo "HASH=$HASH" >> $GITHUB_ENV
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+
+      - name: Update manifest if needed
+        id: update
+        run: |
+          MANIFEST=bucket/pdf-xchange-viewer.json
+          CURRENT_VERSION=$(jq -r '.version' $MANIFEST)
+          CURRENT_HASH=$(jq -r '.hash' $MANIFEST)
+          NEW_VERSION="${{ steps.version.outputs.version }}"
+
+          if [[ "$CURRENT_HASH" != "$HASH" ]]; then
+            echo "Updating manifest..."
+            jq --arg v "$NEW_VERSION" --arg h "$HASH" \
+               '.version=$v | .hash=$h' $MANIFEST > tmp.$$.json && mv tmp.$$.json $MANIFEST
+            echo "updated=true" >> $GITHUB_OUTPUT
+          else
+            echo "Manifest is up-to-date."
+            echo "updated=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit & push changes
+        if: steps.update.outputs.updated == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add bucket/pdf-xchange-viewer.json
+          git commit -m "Auto-update PDF-XChange Viewer manifest to ${{ steps.version.outputs.version }}"
+          git push
