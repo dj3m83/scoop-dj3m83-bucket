@@ -7,11 +7,11 @@
   "hash": "7e6ac641a3421b26b4dcd462743a103567395f90e954a6650c7c58c1d60ad139",
   "innosetup": true,
   "bin": [
-    "PDF Viewer\PDFXCview,2.exe"
+    "PDF Viewer\\DFXCview,2.exe"
   ],
   "shortcuts": [
     [
-      "PDFXCview.exe",
+      "PDF Viewer\\DFXCview,2.exe",
       "PDF-XChange Viewer"
     ]
   ]
