@@ -1,0 +1,18 @@
+{
+  "version": "2.5.322.10",
+  "description": "PDF-XChange Viewer - lightweight PDF viewer.",
+  "homepage": "https://www.tracker-software.com/product/pdf-xchange-viewer",
+  "license": "Freeware",
+  "url": "https://downloads.pdf-xchange.com/PDFXVwer.exe",
+  "hash": "a1eb968028ef0d1c20d02f8a937f36b02f777d0de964e5a8d1788a45618e0973",
+  "innosetup": true,
+  "bin": [
+    "PDFXCview.exe"
+  ],
+  "shortcuts": [
+    [
+      "PDFXCview.exe",
+      "PDF-XChange Viewer"
+    ]
+  ]
+}
