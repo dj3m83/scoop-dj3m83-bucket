@@ -4,7 +4,7 @@
   "homepage": "https://www.tracker-software.com/product/pdf-xchange-viewer",
   "license": "Freeware",
   "url": "https://downloads.pdf-xchange.com/PDFXVwer.exe",
-  "hash": "7e6ac641a3421b26b4dcd462743a103567395f90e954a6650c7c58c1d60ad139",
+  "hash": "a1eb968028ef0d1c20d02f8a937f36b02f777d0de964e5a8d1788a45618e0973",
   "innosetup": true,
   "bin": [
     "PDFXCview.exe"
